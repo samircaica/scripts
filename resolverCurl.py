@@ -2,22 +2,34 @@ import pycurl
 from io import BytesIO
 import socket
 import time
+import sys
 
-urlList = ['www.google.cl', 'www.gmail.com', 'www.inmetrics.cl', 'www.github.com']
+URLS = sys.argv[1]
+urlList = []
+
+#print('Input            = %s ' % URLS)
+l = URLS.split(',')
+
+for iURL in l:
+	#print('Input  in loop          = %s ' % iURL.lstrip())
+	urlList.append(iURL.lstrip())
+
+
+#urlList = ['www.google.cl']
 #urlList = ['bancapersonas.bancoestado.cl']
 #url = 'google.com'
 
 for url in urlList:
 	buffer = BytesIO()
 	retrieved_headers = BytesIO()
-	print 'Obteniendo datos para : %s' % url
+	print('Obteniendo datos para : %s' % url)
 	dns_start = time.time()
 	ip_address = socket.gethostbyname(url)
 	dns_end = time.time()
 
 
-	print 'DNS time            = %.3f seg - %.3f ms' % ((dns_end - dns_start), ((dns_end - dns_start) * 1000))
-	print 'DNS IP            = %s ' % (ip_address)
+	print('DNS time            = %.3f seg - %.3f ms' % ((dns_end - dns_start), ((dns_end - dns_start) * 1000)))
+	print('DNS IP            = %s ' % (ip_address))
 
 	c = pycurl.Curl()
 	c.setopt(c.URL, 'http://'+url+'/')
@@ -45,6 +57,6 @@ for url in urlList:
 	print('OS_ERRNO: %d' % c.getinfo(c.OS_ERRNO))
 
 	#print body
-	print retrieved_headers
+	print(retrieved_headers)
 
 	c.close()
